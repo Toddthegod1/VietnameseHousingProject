@@ -18,8 +18,26 @@ Our project analyzes district-level housing prices in Ho Chi Minh City over time
 
 ## Setup
 
-1. Install dependencies: `pip install -r requirements.txt`
-2. Run the pipeline: `python run_pipeline.py`
+1. **Install Python dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Run the complete analysis pipeline:**
+   ```bash
+   python run_pipeline.py
+   ```
+
+   This will:
+   - Preprocess the housing data and create time-series features
+   - Train Linear Regression, Random Forest, and XGBoost models
+   - Generate evaluation plots and clustering analysis
+   - Save all outputs to the `outputs/` directory
+
+3. **View results:**
+   - Model performance metrics: `outputs/tables/model_results.csv`
+   - Generated plots: `outputs/figures/`
+   - District analysis: `outputs/tables/district_summary.csv` and `outputs/tables/district_clusters.csv`
 
 ## Key Insights
 
