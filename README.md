@@ -24,9 +24,11 @@ Our project analyzes district-level housing prices in Ho Chi Minh City over time
 ## Key Insights
 
 ### Housing Price Distribution
-- **Highest-priced districts**: District 1 (avg. $193), District 3 ($160), District 5 ($157)
-- **Lowest-priced districts**: District 9 (avg. $50), District 2 ($67)
-- **Price range**: $12.22 (District 9 min) to $286.93 (District 1 max)
+**All prices are in millions of Vietnamese Dong (VND)** - approximately $43 USD per million VND at current exchange rates.
+
+- **Highest-priced districts**: District 1 (avg. 193 million VND ≈ $8,400 USD), District 3 (160 million VND ≈ $7,000 USD), District 5 (157 million VND ≈ $6,800 USD)
+- **Lowest-priced districts**: District 9 (avg. 50 million VND ≈ $2,200 USD), District 2 (67 million VND ≈ $2,900 USD)
+- **Price range**: 12 million VND (District 9 min) to 286 million VND (District 1 max)
 
 ### Growth Patterns
 - **Fastest growing**: District 7 with 3.5x growth - emerging hotspot
