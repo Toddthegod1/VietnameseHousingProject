@@ -1,0 +1,21 @@
+import numpy as np
+import pandas as pd
+import openpyxl
+import os
+
+print('hi')
+
+path = r'vietnameseHousing-ds-project\data' 
+#I don't know if this is right, but I clone the github into my local files inside of 'Vietnamese-housing-project-todd-klinger' 
+#And my cwd is that that.
+
+#Ho chi minh city housing price data broken down by district
+hp = pd.read_csv(os.path.join(path, "HousePricingHCM.csv")) 
+print(hp.describe)
+
+df = pd.read_excel(os.path.join(path, "hochiSpatialcost.xlsx"))
+df = df.T
+print(df.columns)
+spatialCost = df.set_index(1).drop(columns = 0)
+print(spatialCost)
+
