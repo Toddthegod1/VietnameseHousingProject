@@ -1,67 +1,160 @@
 # Vietnamese Housing Project
 
-Our project analyzes district-level housing prices in Ho Chi Minh City over time. We transform date-based district price data into a time-series machine learning dataset, engineer lag and rolling statistical features, and train regression models to predict future housing prices. We evaluate model performance using MAE, RMSE, and R², and we further analyze district-level differences through trend visualization and clustering.
+This project analyzes district-level housing prices in Ho Chi Minh City over time. It reshapes raw district price data into a time-series modeling dataset, trains several forecasting models, compares short-term and longer-horizon prediction accuracy, incorporates external economic data, and studies how district housing markets differ.
+
+All housing prices in this project are measured in **millions of Vietnamese Dong (VND)**.
 
 ## Project Structure
 
-- `data/`: Contains the raw data file `HousePricingHCM.csv`
-- `src/`: Source code for preprocessing, training, evaluation, and clustering
-- `outputs/`: Generated outputs including figures, tables, and models
-- `run_pipeline.py`: Script to run the entire pipeline
+- `data/`: Raw input data
+  - `HousePricingHCM.csv`: district-level housing price time series
+  - `consumerPriceIndex.csv`: CPI data used for inflation adjustment
+  - `populationData.csv`: Vietnam population data
+  - `hochiSpatialcost.xlsx`: HCM spatial cost index data
+- `src/`: Python scripts for preprocessing, modeling, forecasting, and analysis
+- `outputs/figures/`: Generated PNG plots
+- `outputs/tables/`: Generated CSV tables
+- `outputs/models/`: Generated `.joblib` model files, ignored by Git because they are large and reproducible
+- `run_pipeline.py`: Runs the full analysis pipeline
 - `requirements.txt`: Python dependencies
 
-## Team Roles
+## Main Pipeline
 
-- **Emerson**: Clean the raw CSV, verify dates and district columns, handle missing values
-- **Will**: Train linear regression, random forest, XGBoost models, compare performance, tune XGBoost
-- **Todd**: Build all plots, compare district trends, make clustering visuals, write interpretation section
+Run the complete project with:
 
-## Setup
+```bash
+python run_pipeline.py
+```
 
-1. **Install Python dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+The pipeline runs these scripts in order:
 
-2. **Run the complete analysis pipeline:**
-   ```bash
-   python run_pipeline.py
-   ```
+1. `src/preprocess_timeseries.py`
+   - Converts the housing data from wide to long format
+   - Adds time, lag, and rolling-window features
+   - Saves `outputs/tables/modeling_dataset.csv`
 
-   This will:
-   - Preprocess the housing data and create time-series features
-   - Train Linear Regression, Random Forest, and XGBoost models
-   - Generate evaluation plots and clustering analysis
-   - Save all outputs to the `outputs/` directory
+2. `src/train_timeseries.py`
+   - Trains Linear Regression, Random Forest, and XGBoost models
+   - Uses a time-based train/test split, not a random split
+   - Saves model metrics and predictions
 
-3. **View results:**
-   - Model performance metrics: `outputs/tables/model_results.csv`
-   - Generated plots: `outputs/figures/`
-   - District analysis: `outputs/tables/district_summary.csv` and `outputs/tables/district_clusters.csv`
+3. `src/evaluate_timeseries.py`
+   - Generates model evaluation plots
 
-## Key Insights
+4. `src/cluster_districts.py`
+   - Creates district-level summary statistics
+   - Runs K-means clustering and PCA visualization
 
-### Housing Price Distribution
-**All prices are in millions of Vietnamese Dong (VND)** - approximately $43 USD per million VND at current exchange rates.
+5. `src/merge_external_data.py`
+   - Merges CPI, population, and spatial cost data with the housing data
+   - Creates real inflation-adjusted prices and affordability metrics
 
-- **Highest-priced districts**: District 1 (avg. 193 million VND ≈ $8,400 USD), District 3 (160 million VND ≈ $7,000 USD), District 5 (157 million VND ≈ $6,800 USD)
-- **Lowest-priced districts**: District 9 (avg. 50 million VND ≈ $2,200 USD), District 2 (67 million VND ≈ $2,900 USD)
-- **Price range**: 12 million VND (District 9 min) to 286 million VND (District 1 max)
+6. `src/multi_horizon_forecast.py`
+   - Compares 1-day, 7-day, and 30-day price-level forecasts
 
-### Growth Patterns
-- **Fastest growing**: District 7 with 3.5x growth - emerging hotspot
-- **Slowest growing**: District 6 with 0.32x growth - stable market
-- **Strong growth districts**: Districts 9 (1.53x), 5 (1.39x), 1 (1.29x)
+7. `src/predict_growth_30d.py`
+   - Predicts 30-day percentage price growth by district
+   - This is a harder and more decision-useful target than next-day price level
 
-### District Clustering (K-means, k=3)
-- **Cluster 1 (Premium growing)**: Districts 1, 3, 5 - high-value established markets
-- **Cluster 0 (Affordable moderate)**: Districts 2, 4, 6, 8, 9 - varied growth patterns
-- **Cluster 2 (Outlier)**: District 7 - low price but explosive growth
+8. `src/advanced_analysis.py`
+   - Generates feature importance, residual analysis, K-means elbow/silhouette plots, and price-gap convergence analysis
 
-### Model Performance
-- **Excellent accuracy** (R² > 99% for all models)
-- **Best performer**: Linear Regression (MAE: 1.53, RMSE: 1.90)
-- **All districts highly predictable** using time-series features
+## Current Model Results
 
-### Strategic Conclusions
-District-level temporal patterns are powerful predictors of future housing prices. District 7 represents the greatest growth opportunity, while Districts 1, 3, and 5 are established premium markets.
+The standard price-level models are very accurate, but this should be interpreted carefully because housing prices are highly autocorrelated. In other words, yesterday's price is very useful for predicting today's or tomorrow's price.
+
+From `outputs/tables/model_results.csv`:
+
+| Model | MAE | RMSE | R2 |
+|---|---:|---:|---:|
+| Linear Regression | 1.53 | 1.90 | 0.9989 |
+| XGBoost | 1.58 | 2.09 | 0.9986 |
+| Random Forest | 1.79 | 2.59 | 0.9979 |
+
+The high R2 values are not just a win; they are also a warning. Feature importance shows that `lag_1` alone accounts for about **51.9%** of XGBoost feature importance, meaning the model is heavily relying on the previous price.
+
+## Multi-Horizon Forecasting
+
+To test whether the model is doing more than repeating recent prices, the project also forecasts prices farther ahead.
+
+From `outputs/tables/multi_horizon_overall.csv`:
+
+| Horizon | MAE | RMSE | R2 |
+|---:|---:|---:|---:|
+| 1 day | 1.65 | 2.16 | 0.9985 |
+| 7 days | 2.05 | 2.84 | 0.9975 |
+| 30 days | 2.79 | 4.01 | 0.9950 |
+
+Accuracy gets worse as the forecast horizon increases. This supports the main modeling interpretation: short-term price levels are easy to predict because prices move smoothly, but longer-horizon forecasting is harder.
+
+## 30-Day Growth Forecast
+
+The project now includes a more difficult target: predicting **30-day percentage price growth** by district.
+
+From `outputs/tables/growth_30d_overall_metrics.csv`:
+
+| Model | Horizon | MAE | RMSE | R2 |
+|---|---:|---:|---:|---:|
+| XGBoost | 30 days | 2.17 percentage points | 2.84 percentage points | -0.040 |
+| Naive zero-growth baseline | 30 days | 2.18 percentage points | 2.78 percentage points | ~0.000 |
+| Naive past-growth baseline | 30 days | 3.31 percentage points | 4.19 percentage points | -1.267 |
+
+This result is important: predicting growth is much harder than predicting price level. XGBoost only slightly improves MAE over a simple zero-growth baseline, so the project should not claim that 30-day appreciation is strongly predictable.
+
+Latest available 30-day growth ranking from `outputs/tables/growth_30d_latest_district_forecast.csv`:
+
+| Rank | District | Predicted 30-Day Growth |
+|---:|---|---:|
+| 1 | District 2 | 3.64% |
+| 2 | District 8 | 3.60% |
+| 3 | District 9 | 2.67% |
+| 4 | District 3 | 1.60% |
+| 5 | District 5 | 1.37% |
+| 6 | District 1 | 0.67% |
+| 7 | District 7 | 0.22% |
+| 8 | District 6 | 0.09% |
+| 9 | District 4 | -0.52% |
+
+## External Data Analysis
+
+The external-data script adds economic context:
+
+- CPI is used to calculate real, inflation-adjusted housing prices.
+- Population data is merged by year to add demographic context.
+- Spatial cost data is merged by year for HCM cost comparisons.
+- The project creates affordability and real-price plots.
+
+Key output files:
+
+- `outputs/tables/enriched_dataset.csv`
+- `outputs/figures/real_vs_nominal_prices.png`
+- `outputs/figures/real_vs_nominal_growth.png`
+- `outputs/figures/affordability_trend.png`
+- `outputs/figures/population_vs_real_price_growth.png`
+
+## District-Level Findings
+
+From `outputs/tables/district_summary.csv`:
+
+- Highest average prices: District 1, District 3, District 5
+- Lowest average prices: District 9, District 2, District 7
+- Fastest cumulative growth: District 7
+- Slowest cumulative growth: District 6
+
+The clustering analysis currently uses `k=3`:
+
+- Cluster 1: Districts 1, 3, 5
+- Cluster 0: Districts 2, 4, 6, 8, 9
+- Cluster 2: District 7
+
+However, the advanced analysis shows that the silhouette score is strongest at `k=2`, suggesting the data may naturally split more cleanly into a premium group and a more affordable group.
+
+## Main Interpretation
+
+The strongest conclusion is not simply that the models achieve very high R2. A more accurate interpretation is:
+
+> Ho Chi Minh City housing prices are highly autocorrelated, so short-term price levels are easy to forecast from recent prices. However, predicting future appreciation is much harder. Inflation adjustment reduces the apparent size of nominal growth, and district-level price gaps have widened over time, suggesting increasing spatial inequality across the housing market.
+
+## Notes for GitHub
+
+Generated model files in `outputs/models/` are intentionally ignored because they are large and can be recreated by running the pipeline. Generated figures and tables are included so the results can be inspected without rerunning everything.
