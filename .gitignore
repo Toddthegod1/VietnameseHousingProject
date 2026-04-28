@@ -1,7 +1,3 @@
-# Generated outputs
-outputs/models/
-outputs/figures/
-outputs/tables/
 
 # Python cache
 __pycache__/
@@ -14,6 +10,9 @@ __pycache__/
 # IDE files
 .vscode/
 .idea/
+
+# Generated model files
+outputs/models/
 
 # OS files
 .DS_Store

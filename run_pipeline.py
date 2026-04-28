@@ -10,6 +10,7 @@ files = [
     # New analyses
     "src/merge_external_data.py",
     "src/multi_horizon_forecast.py",
+    "src/predict_growth_30d.py",
     "src/advanced_analysis.py",
 ]
 

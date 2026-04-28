@@ -1,0 +1,28 @@
+feature,importance
+lag_1,0.5186814
+roll_mean_3,0.33545092
+roll_mean_7,0.08012735
+lag_2,0.047071684
+lag_3,0.009565723
+roll_mean_30,0.002887216
+roll_mean_14,0.0025323473
+District_District 1,0.0013118226
+lag_7,0.00033036043
+year,0.00027506365
+District_District 4,0.0002185964
+lag_30,0.0001982768
+lag_14,0.00018256572
+month,0.00018007138
+day,0.00014408244
+roll_std_30,0.00012448958
+District_District 6,0.00010193466
+District_District 5,9.219362e-05
+roll_std_7,8.6892695e-05
+roll_std_3,8.299098e-05
+roll_std_14,6.817805e-05
+District_District 7,6.5875734e-05
+quarter,6.021477e-05
+District_District 3,5.9372353e-05
+District_District 2,4.167132e-05
+District_District 8,3.482784e-05
+District_District 9,2.3903245e-05
