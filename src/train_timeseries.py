@@ -67,7 +67,7 @@ def main():
         "RandomForest": RandomForestRegressor(
             n_estimators=200,
             random_state=42,
-            n_jobs=-1
+            n_jobs=1
         ),
         "XGBoost": XGBRegressor(
             n_estimators=300,

@@ -40,7 +40,6 @@ def add_time_features(df):
     df["year"] = df["Date"].dt.year
     df["month"] = df["Date"].dt.month
     df["day"] = df["Date"].dt.day
-    df["dayofweek"] = df["Date"].dt.dayofweek
     df["quarter"] = df["Date"].dt.quarter
 
     return df
