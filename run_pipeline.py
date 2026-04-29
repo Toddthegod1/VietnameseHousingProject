@@ -7,6 +7,7 @@ files = [
     "src/train_timeseries.py",
     "src/evaluate_timeseries.py",
     "src/cluster_districts.py",
+    "src/district_context_analysis.py",
     # New analyses
     "src/merge_external_data.py",
     "src/multi_horizon_forecast.py",

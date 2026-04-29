@@ -1,0 +1,10 @@
+District,area_km2,population,source_year,lat,lon,context_notes
+District 1,7.73,142625,2020,10.7769,106.7009,"2020 area/population; approximate district centroid"
+District 2,50.00,168680,2018,10.7808,106.7569,"Former district merged into Thu Duc City in 2021; approximate district centroid"
+District 3,4.92,190375,2020,10.7844,106.6844,"2020 area/population; approximate district centroid"
+District 4,4.18,175329,2020,10.7600,106.7050,"2020 area/population; approximate district centroid"
+District 5,4.27,159073,2020,10.7540,106.6645,"2020 area/population; approximate district centroid"
+District 6,7.14,233561,2020,10.7460,106.6357,"2020 area/population; approximate district centroid"
+District 7,35.69,360155,2020,10.7340,106.7216,"2020 area/population; approximate district centroid"
+District 8,19.11,424667,2020,10.7241,106.6286,"2020 area/population; approximate district centroid"
+District 9,114.00,263486,2010,10.8303,106.8175,"Former district merged into Thu Duc City in 2021; approximate district centroid"

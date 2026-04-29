@@ -11,6 +11,7 @@ All housing prices in this project are measured in **millions of Vietnamese Dong
   - `consumerPriceIndex.csv`: CPI data used for inflation adjustment
   - `populationData.csv`: Vietnam population data
   - `hochiSpatialcost.xlsx`: HCM spatial cost index data
+  - `district_context.csv`: district area, population, approximate coordinates, population density inputs
 - `src/`: Python scripts for preprocessing, modeling, forecasting, and analysis
 - `outputs/figures/`: Generated PNG plots
 - `outputs/tables/`: Generated CSV tables
@@ -45,18 +46,22 @@ The pipeline runs these scripts in order:
    - Creates district-level summary statistics
    - Runs K-means clustering and PCA visualization
 
-5. `src/merge_external_data.py`
+5. `src/district_context_analysis.py`
+   - Adds district population density and distance to District 1
+   - Compares these context variables against average price and growth
+
+6. `src/merge_external_data.py`
    - Merges CPI, population, and spatial cost data with the housing data
    - Creates real inflation-adjusted prices and affordability metrics
 
-6. `src/multi_horizon_forecast.py`
+7. `src/multi_horizon_forecast.py`
    - Compares 1-day, 7-day, and 30-day price-level forecasts
 
-7. `src/predict_growth_30d.py`
+8. `src/predict_growth_30d.py`
    - Predicts 30-day percentage price growth by district
    - This is a harder and more decision-useful target than next-day price level
 
-8. `src/advanced_analysis.py`
+9. `src/advanced_analysis.py`
    - Generates feature importance, residual analysis, K-means elbow/silhouette plots, and price-gap convergence analysis
 
 ## Current Model Results
@@ -148,6 +153,26 @@ The clustering analysis currently uses `k=3`:
 - Cluster 2: District 7
 
 However, the advanced analysis shows that the silhouette score is strongest at `k=2`, suggesting the data may naturally split more cleanly into a premium group and a more affordable group.
+
+## District Context Features
+
+The project now includes `data/district_context.csv`, which adds:
+
+- district land area
+- district population
+- population density
+- approximate latitude/longitude
+- straight-line distance to District 1
+
+These features are analyzed in `src/district_context_analysis.py`, which produces:
+
+- `outputs/tables/district_context_summary.csv`
+- `outputs/tables/district_context_correlations.csv`
+- `outputs/figures/district_context_price_relationships.png`
+- `outputs/figures/district_context_growth_relationships.png`
+- `outputs/figures/district_context_correlations.png`
+
+Important caveat: District 2 and District 9 were merged into Thu Duc City in 2021, but the original housing dataset still uses old District 2 and District 9 labels. The context file keeps those former-district labels for compatibility. Source notes are documented in `data/district_context_sources.md`.
 
 ## Main Interpretation
 
